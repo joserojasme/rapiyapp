@@ -78,7 +78,8 @@ const Fuente = Styled.form`
 
 const styleDrawer = {
     drawer:{
-        color:'white'
+        color:'white',
+        zIndex: '9000'
     }
 }
 

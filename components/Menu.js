@@ -80,6 +80,7 @@ export default connect(mapStateToProps)(Menu);
 const styleDrawer = {
     drawer:{
         backgroundColor: '#D9D3D1',
+        zIndex: '9999'
     }
 }
 

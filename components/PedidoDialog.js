@@ -38,6 +38,13 @@ class PedidoDialog extends Component{
                 lanzar:false
             }
         });
+
+        this.props.dispatch({
+            type:'SET_LOADING_STATUS',
+            payload:{
+                visible:'hide'
+            }
+        });
     }
 
     handleOpen = () => {

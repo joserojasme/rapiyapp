@@ -62,7 +62,6 @@ class Home extends Component{
 
     async componentWillReceiveProps({query})
     {
-
         if(sessionStorage.getItem("estado") == 1){
             const URL = `//vmr.tarrao.co/data/getMensajeria`;
             const response = await fetch(URL);
@@ -71,6 +70,12 @@ class Home extends Component{
                             bienvenida:true,
                             cargaMensajeria:false,
                             cargaMensajero:true
+            });
+            this.props.dispatch({
+                type:'SET_LOADING_STATUS',
+                payload:{
+                    visible:'hide'
+                }
             });
         }else
         {
@@ -83,15 +88,16 @@ class Home extends Component{
                                 cargaMensajeria:true,
                                 cargaMensajero:false
                 });
+                this.props.dispatch({
+                    type:'SET_LOADING_STATUS',
+                    payload:{
+                        visible:'hide'
+                    }
+                });
             }
         }
 
-        this.props.dispatch({
-            type:'SET_LOADING_STATUS',
-            payload:{
-                visible:'hide'
-            }
-        });
+
 
     }
 
@@ -105,11 +111,6 @@ class Home extends Component{
                     <Spinner>
                     <Cargando/>
                     </Spinner>
-                    {!this.state.lanzar &&
-                        <div>
-                            <PedidoDialog/>
-                        </div>
-                    }
 
                     {!this.state.bienvenida &&
                         <Bienvenida>
@@ -138,6 +139,8 @@ class Home extends Component{
                     )}
                     </ul>
                     }
+
+
                 </Content>
                 <Footer/>
             </div>

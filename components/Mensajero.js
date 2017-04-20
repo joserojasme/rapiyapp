@@ -7,6 +7,7 @@ import Avatar from 'material-ui/Avatar';
 import List from 'material-ui/List/List';
 import ListItem from 'material-ui/List/ListItem';
 import Styled from 'styled-components';
+import PedidoDialog from '../components/PedidoDialog';
 
 class Mensajero extends Component{
     constructor(props){
@@ -45,6 +46,11 @@ class Mensajero extends Component{
         if(this.props.BotonDisable == 0){
             return(
                 <div>
+                    {this.props.lanzar &&
+                    <div>
+                        <PedidoDialog/>
+                    </div>
+                    }
                     <MuiThemeProvider>
                         <Fuente>
                             <Card>
@@ -121,7 +127,13 @@ class Mensajero extends Component{
     }
 }
 
-export default connect(null)(Mensajero);
+function mapStateToProps(state) {
+    return {
+        lanzar: state.lanzar
+    }
+}
+
+export default connect(mapStateToProps)(Mensajero);
 
 const Fuente = Styled.form`
   font-weight: bold;

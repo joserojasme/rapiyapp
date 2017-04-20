@@ -20,6 +20,7 @@ class Loading extends  Component{
                         left={10}
                         top={0}
                         status={this.props.visible}
+                        style={style.container}
                     />
                 </div>
             </MuiThemeProvider>
@@ -39,10 +40,7 @@ export default connect(mapStateToProps)(Loading);
 
 const style = {
     container: {
-        position: 'relative',
+        position: 'absolute',
     },
-    refresh: {
-        display: 'inline-block',
-        position: 'relative',
-    },
+
 };
