@@ -1,0 +1,8 @@
+{
+  "name": "rapiyapp",
+  "alias": "josemanuel20172.now.sh",
+  "env": {
+    "NODE_ENV": "production"
+  },
+  "type": "npm"
+}
