@@ -2,19 +2,17 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import Dialog from 'material-ui/Dialog';
 import FlatButton from 'material-ui/FlatButton';
-import RaisedButton from 'material-ui/RaisedButton';
-import {RadioButton, RadioButtonGroup} from 'material-ui/RadioButton';
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
+import Styled from 'styled-components';
+import Router from 'next/router';
+import TabServicio from '../components/TabServicio';
 
-const styles = {
-    radioButton: {
-        marginTop: 16,
-    },
-};
 
 const customContentStyle = {
     width: '100%',
     maxWidth: 'none',
+    maxHeight: '20%',
+    textAlign:'center'
 };
 
 class PedidoDialog extends Component{
@@ -22,16 +20,33 @@ class PedidoDialog extends Component{
         super(props);
     }
 
+    async cambiarEstadoMensajero(idEstado, idMensajero) {
+        Router.push(`/`);
+        /*const URL = `//vmr.tarrao.co/data/updateEstadoMensajero/${idEstado}/${idMensajero}`;
+        const response = await fetch(URL);
+        if(response.status == 200){
+            Router.push(`/`);
+        }else{
+            this.props.dispatch({
+                type:'ERROR_DIALOG',
+                payload:{
+                    error:true
+                }
+            });
+        }*/
+    }
+
     async componentWillReceiveProps() {
         this.props.dispatch({
             type:'SET_LOADING_STATUS',
             payload:{
-                visible:'hide'
+                visible:'loading'
             }
         });
     }
 
     async componentWillUnmount(){
+        this.cambiarEstadoMensajero(1,sessionStorage.getItem("idMensajero"));
         this.props.dispatch({
             type:'SET_PEDIDODIALOG',
             payload:{
@@ -42,14 +57,10 @@ class PedidoDialog extends Component{
         this.props.dispatch({
             type:'SET_LOADING_STATUS',
             payload:{
-                visible:'hide'
+                visible:'loading'
             }
         });
     }
-
-    handleOpen = () => {
-        this.setState({open: true});
-    };
 
     handleClose = () => {
         this.props.dispatch({
@@ -58,7 +69,9 @@ class PedidoDialog extends Component{
                 lanzar:false
             }
         });
+        this.cambiarEstadoMensajero(1,sessionStorage.getItem("idMensajero"));
     };
+
 
     render(){
         const actions = [
@@ -66,44 +79,30 @@ class PedidoDialog extends Component{
                 label="Cancelar"
                 primary={true}
                 onTouchTap={this.handleClose}
+                style={styleDialog.Boton}
             />,
-            <FlatButton
+            /*<FlatButton
                 label="Enviar"
                 primary={true}
                 keyboardFocused={true}
-                onTouchTap={this.handleClose}
-            />,
+                onTouchTap={this.handleSubmit}
+                style={styleDialog.Boton}
+            />,*/
         ];
-
-        const radios = [];
-        for (let i = 0; i < 2; i++) {
-            radios.push(
-                <RadioButton
-                    key={i}
-                    value={`value${i + 1}`}
-                    label={`Opcion ${i + 1}`}
-                    style={styles.radioButton}
-                />
-            );
-        }
-
         return(
             <MuiThemeProvider>
                 <div>
-                    <Dialog
-                        title="Nuevo domicilio"
-                        actions={actions}
-                        modal={false}
-                        open={this.props.lanzar}
-                        onRequestClose={this.handleClose}
-                        autoScrollBodyContent={true}
-                        contentStyle={customContentStyle}
-                    >
-                        Aquí se pedirá toda la información para enviar la nueva solictud de domicilio.
-                        <RadioButtonGroup name="shipSpeed" defaultSelected="not_light">
-                            {radios}
-                        </RadioButtonGroup>
-                    </Dialog>
+                        <Fuente>
+                        Seleccione un tipo de servicio
+                        </Fuente>
+                        <TabServicio/>
+                    <FlatButton
+                        label="Cancelar solicitud"
+                        primary={true}
+                        onTouchTap={this.handleClose}
+                        style={styleDialog.Boton}
+                    />
+
                 </div>
             </MuiThemeProvider>
         );
@@ -119,3 +118,22 @@ function mapStateToProps(state) {
 
 export default connect(mapStateToProps)(PedidoDialog);
 
+const Fuente = Styled.h5`
+  font-weight: bold;
+  font-family: 'Quicksand';
+  text-align:center;
+`;
+
+const styleDialog = {
+    Boton:{
+        fontFamily:'Quicksand',
+        fontWeight:'bold',
+        textAlign:'left'
+    },
+    Title:{
+        zIndex:'0',
+        fontFamily:'Quicksand',
+        fontWeight:'bold',
+        color:'#64DD17'
+    }
+}

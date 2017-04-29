@@ -7,20 +7,100 @@ import Avatar from 'material-ui/Avatar';
 import List from 'material-ui/List/List';
 import ListItem from 'material-ui/List/ListItem';
 import Styled from 'styled-components';
-import PedidoDialog from '../components/PedidoDialog';
+import ErroDialog from '../components/ErrorDialog';
+import ValidacionError from '../components/ValidacionDialog'
+import Router from 'next/router';
 
 class Mensajero extends Component{
-    constructor(props){
-        super(props);
+    constructor(props, context){
+        super(props, context);
     }
 
-    async  cambiarEstadoMensajero()
-    {
-        /*
-        const URL = `//vmr.tarrao.co/data/getMensajeria`;
+    async validarEstadoMensajero(idMensajero) {
+        const URL = `//vmr.tarrao.co/data/getEstadoMensajero/${idMensajero}`;
         const response = await fetch(URL);
-        const data = await response.json();*/
-        console.log("**Entro", "hola");
+        if(response.status != 200){
+            this.props.dispatch({
+                type:'ERROR_DIALOG',
+                payload:{
+                    error:true
+                }
+            });
+            this.props.dispatch({
+                type:'SET_ERROR_MESSAGE',
+                payload:{
+                    errorMessage:':( Por favor intenta de nuevo más tarde...'
+                }
+            });
+            return;
+        }
+
+        const data = await response.json();
+        if((data.Mensajero.map(mensajero=>mensajero.idEstado)) == "3"){
+            this.props.dispatch({
+                type:'SET_ERROR_MESSAGE',
+                payload:{
+                    errorMessage:'Lo sentimos, parace que alguien se adelantó y ya escogió este mensajero llegando al límite de solicitudes al tiempo.'
+                }
+            });
+            this.props.dispatch({
+                type:'ERROR_DIALOG',
+                payload:{
+                    error:true
+                }
+            });
+        }else{
+            if(this.props.error == false)
+            {
+                sessionStorage.setItem("idMensajero", this.props.id);
+                sessionStorage.setItem("nombreMensajero", this.props.Nombre);
+                sessionStorage.setItem("urlImagenMensajero", this.props.urlImagen);
+                sessionStorage.setItem("estado", 3);
+                Router.push(`/`);
+
+                /*if(this.props.Nombre == "Mensajero aleatorio"){
+                    sessionStorage.setItem("idMensajero", this.props.id);
+                    sessionStorage.setItem("nombreMensajero", this.props.Nombre);
+                    this.props.dispatch({
+                        type:'SET_PEDIDODIALOG',
+                        payload:{
+                            lanzar:true
+                        }
+                    });
+                }else{
+                    this.cambiarEstadoMensajero(12,this.props.id);
+                }*/
+            }
+        }
+    }
+
+    async cambiarEstadoMensajero(idEstado, idMensajero) {
+        const URL = `//vmr.tarrao.co/data/updateEstadoMensajero/${idEstado}/${idMensajero}`;
+
+        const response = await fetch(URL);
+        if(response.status == 200){
+            sessionStorage.setItem("idMensajero", this.props.id);
+            sessionStorage.setItem("nombreMensajero", this.props.Nombre);
+            this.props.dispatch({
+                type:'SET_PEDIDODIALOG',
+                payload:{
+                    lanzar:true
+                }
+            });
+        }else{
+            this.props.dispatch({
+                type:'SET_ERROR_MESSAGE',
+                payload:{
+                    errorMessage:'Ha ocurrido un problema. Estamos trabajando en esto. Por favor intente más tarde.'
+                }
+            });
+            this.props.dispatch({
+                type:'ERROR_DIALOG',
+                payload:{
+                    error:true
+                }
+            });
+        }
     }
 
     handleClick = event =>{
@@ -29,28 +109,26 @@ class Mensajero extends Component{
             payload:{
                 visible:'loading'
             }
-
         });
-
-        this.cambiarEstadoMensajero();
-
-        this.props.dispatch({
-            type:'SET_PEDIDODIALOG',
-            payload:{
-                lanzar:true
-            }
-        });
+        this.validarEstadoMensajero(this.props.id);
     };
 
     render(){
-        if(this.props.BotonDisable == 0){
+        if(this.props.EnCola < 3){
             return(
                 <div>
-                    {this.props.lanzar &&
+                    {this.props.error &&
                     <div>
-                        <PedidoDialog/>
+                        <ErroDialog descripcion={this.props.errorMessage}/>
                     </div>
                     }
+
+                    {this.props.validacionerror &&
+                    <div>
+                        <ValidacionError descripcion={this.props.errorMessage}/>
+                    </div>
+                    }
+
                     <MuiThemeProvider>
                         <Fuente>
                             <Card>
@@ -58,7 +136,7 @@ class Mensajero extends Component{
                                     actAsExpander={true}
                                     showExpandableButton={true}
                                     style={cardColor.card}
-                                    subtitle={this.props.EstadoDesc}
+                                    subtitle={this.props.EstadoDesc + ' - Pendientes: '+ this.props.EnCola}
                                 >
                                     <List>
                                         <ListItem
@@ -78,7 +156,7 @@ class Mensajero extends Component{
                                     Placa: {this.props.placa}
                                 </CardText>
                                 <CardActions>
-                                    <FlatButton fullWidth={true} rippleColor="white" style={styleDrawer.drawer} backgroundColor="#64DD17" label="Seleccionar" primary={true} onTouchTap={this.handleClick}/>
+                                    <FlatButton  rippleColor="white" style={styleDrawer.Boton} backgroundColor="#009688" label="Seleccionar" primary={true} onTouchTap={this.handleClick}/>
                                 </CardActions>
                             </Card>
                         </Fuente>
@@ -96,7 +174,7 @@ class Mensajero extends Component{
                                     actAsExpander={true}
                                     showExpandableButton={true}
                                     style={cardColor.card}
-                                    subtitle={this.props.EstadoDesc}
+                                    subtitle={this.props.EstadoDesc  + ' - Pendientes: '+ this.props.EnCola}
                                 >
                                     <List>
                                         <ListItem
@@ -129,7 +207,10 @@ class Mensajero extends Component{
 
 function mapStateToProps(state) {
     return {
-        lanzar: state.lanzar
+        lanzar: state.lanzar,
+        error: state.error,
+        errorMessage: state.errorMessage,
+        validacionerror: state.validacionerror,
     }
 }
 
@@ -141,8 +222,9 @@ const Fuente = Styled.form`
 `;
 
 const styleDrawer = {
-    drawer:{
+    Boton:{
         color:'white',
+        zIndex: '0'
     }
 }
 
@@ -151,9 +233,3 @@ const cardColor = {
         backgroundColor:'#F1F8E9'
     }
 }
-
-const Title = Styled.h5`
-  font-weight: bold;
-  font-family: 'Quicksand';
-  text-align:center;
-`;

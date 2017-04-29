@@ -34,16 +34,18 @@ class AppBarr extends Component{
     }
 }
 
-const Title = styled.form`
-  display: flex;
-  font-weight: bold;
-  font-family: 'Quicksand';
-`;
+
 
 const AppBarStyle = {
     AppBar:{
         backgroundColor: '#011528',
+        zIndex:'100'
     }
 }
 
-export default connect(null)(AppBarr);
+function mapStateToProps(state){
+    return{
+        open: state.open
+    }
+}
+export default connect(mapStateToProps)(AppBarr);

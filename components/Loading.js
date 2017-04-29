@@ -40,7 +40,7 @@ export default connect(mapStateToProps)(Loading);
 
 const style = {
     container: {
-        position: 'absolute',
+        position: 'absolute'
     },
 
 };

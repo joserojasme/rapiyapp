@@ -29,8 +29,8 @@ function Logo(props) {
     return (
         <div>
             <Title>
-                <Rapi>Rapi</Rapi>
-                <Yapp>YApp</Yapp>
+                <Rapi>ven<Yapp>A</Yapp>casa</Rapi>
+                <Yapp>.co</Yapp>
             </Title>
         </div>
     );

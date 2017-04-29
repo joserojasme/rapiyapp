@@ -23,6 +23,7 @@ class Mensajeria extends Component{
         });
 
         sessionStorage.setItem("idMensajeria", this.props.id);
+        sessionStorage.setItem("nombreMensajeria", this.props.nombre);
         sessionStorage.setItem("estado", 2);
         Router.push(`/`);
     };
@@ -30,9 +31,8 @@ class Mensajeria extends Component{
     render(){
         return(
             <div>
-                <Title>Seleccione una mensajería</Title>
                 <MuiThemeProvider>
-                    <Fuente>
+                    <Fuente onSubmit={props.onSubmit}>
                     <Card>
                         <CardHeader
                             actAsExpander={true}
@@ -57,7 +57,9 @@ class Mensajeria extends Component{
                             Horario: {this.props.horario}
                         </CardText>
                         <CardActions>
-                            <FlatButton fullWidth={true} rippleColor="white" style={styleDrawer.drawer} backgroundColor="#64DD17" label="Seleccionar" secondary={true} onTouchTap={this.handleClick}/>
+
+                            <FlatButton  rippleColor="white" style={styleDrawer.Boton} backgroundColor="#009688" label="Seleccionar" secondary={true} />
+                            <ButtonAgregar>Agregar artículo</ButtonAgregar>
                         </CardActions>
                     </Card>
                     </Fuente>
@@ -76,10 +78,12 @@ const Fuente = Styled.form`
   background-color:'#E8F5E9';
 `;
 
+
+
 const styleDrawer = {
-    drawer:{
+    Boton:{
         color:'white',
-        zIndex: '9000'
+        zIndex: '0'
     }
 }
 
@@ -89,8 +93,3 @@ const cardColor = {
     }
 }
 
-const Title = Styled.h5`
-  font-weight: bold;
-  font-family: 'Quicksand';
-  text-align:center;
-`;

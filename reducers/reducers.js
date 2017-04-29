@@ -21,8 +21,17 @@ function reducer(state, action){
         case 'SET_PEDIDODIALOG':
             return {...state, lanzar: action.payload.lanzar};
             break;
-        case 'VALORES_PEDIDODIALOG':
-            return {...state, valores: action.payload.valores};
+        case 'ERROR_DIALOG':
+            return {...state, error: action.payload.error};
+            break;
+        case 'SET_ERROR_MESSAGE':
+            return {...state, errorMessage: action.payload.errorMessage};
+            break;
+        case 'VALIDACION_DIALOG':
+            return {...state, validacionerror: action.payload.validacionerror};
+            break;
+        case 'SET_DATOS_VARIOS':
+            return {...state, estado: action.payload.validacionerror};
             break;
         default: return state;
     }
